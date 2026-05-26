@@ -6,13 +6,14 @@ from dotenv import load_dotenv
 from app.database import Base, engine
 from app.models.load import Load
 from app.tools.kpi_tool import total_revenue
-from app.seed_data import *
 
 from app.chat.orchestrator import chat
 
 load_dotenv()
 
 Base.metadata.create_all(bind=engine)
+
+from app.seed_data import *
 
 app = FastAPI(
     title="FleetOps AI Assistant",
