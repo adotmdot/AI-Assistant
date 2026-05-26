@@ -13,7 +13,7 @@ def total_revenue():
     ).scalar()
 
     return {
-        "total_revenue": round(revenue, 2)
+        "total_revenue": round(float(revenue or 0), 2)
     }
 
 

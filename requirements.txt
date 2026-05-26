@@ -6,3 +6,5 @@ faiss-cpu==1.14.2
 numpy==1.26.4
 openai==1.58.1
 httpx==0.28.1
+sqlalchemy
+psycopg2-binary
