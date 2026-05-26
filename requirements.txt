@@ -8,3 +8,4 @@ openai==1.58.1
 httpx==0.28.1
 sqlalchemy
 psycopg2-binary
+Faker==37.1.0
