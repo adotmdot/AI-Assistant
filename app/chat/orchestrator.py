@@ -5,10 +5,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from openai import OpenAI
-
-from app.tools.kpi_tool import on_time_percentage
 from app.rag.faiss_store import FaissStore
 from app.rag.embeddings import embed_texts
+from app.tools.kpi_tool import (
+    total_revenue,
+    average_revenue,
+    total_loaded_miles,
+    total_empty_miles,
+    top_customers,
+    top_routes,
+    delayed_loads
+)
 
 # ===============================
 # System prompt
@@ -33,11 +40,16 @@ rag.build()
 # Intent keyword routing
 # ===============================
 KPI_TRIGGERS = [
+    "on-time",
+    "kpi",
+    "late loads",
+    "carrier score",
+    "escalations",
     "performance",
+    "trend",
     "percentage",
     "rate",
-    "how are we doing",
-    "what is our",
+    "metrics"
 ]
 
 POLICY_TRIGGERS = [
@@ -48,31 +60,104 @@ POLICY_TRIGGERS = [
     "action",
     "escalation",
 ]
-
-# ===============================
-# Chat Orchestrator
-# ===============================
+        
+    
 def chat(message: str) -> dict:
     msg = message.lower()
 
-    # -------------------------------------------------
-    # KPI PATH (metrics only — no policy questions)
-    # -------------------------------------------------
-    if (
-        "on-time" in msg
-        and any(k in msg for k in KPI_TRIGGERS)
-        and not any(p in msg for p in POLICY_TRIGGERS)
-    ):
-        value = on_time_percentage(7)
+    # -----------------------------------
+    # REVENUE
+    # -----------------------------------
+
+    if "revenue" in msg:
+
         return {
-            "answer": f"On-time delivery over the last 7 days is {value}%. Target is 92%.",
-            "kpi": value,
-            "mode": "kpi",
+            "answer": str(total_revenue()),
+            "mode": "kpi"
         }
 
+    # -----------------------------------
+    # TOP CUSTOMERS
+    # -----------------------------------
+
+    elif "top customers" in msg:
+
+        data = top_customers()
+
+        return {
+
+            "answer": "Top customers by revenue.",
+
+            "mode": "chart",
+
+            "chart": {
+                "type": "bar",
+
+                "labels": [
+                    item["customer"]
+                    for item in data
+                ],
+
+                "values": [
+                    item["revenue"]
+                    for item in data
+                ]
+            }
+        }
+
+    # -----------------------------------
+    # TOP ROUTES
+    # -----------------------------------
+
+    elif "top routes" in msg:
+
+        data = top_routes()
+
+        return {
+
+            "answer": "Top revenue generating lanes.",
+
+            "mode": "chart",
+
+            "chart": {
+                "type": "bar",
+
+                "labels": [
+                    item["route"]
+                    for item in data
+                ],
+
+                "values": [
+                    item["revenue"]
+                    for item in data
+                ]
+            }
+        }
+
+    # -----------------------------------
+    # DELAYED LOADS
+    # -----------------------------------
+
+    elif "delayed loads" in msg:
+
+        data = delayed_loads()
+
+        return {
+
+            "answer": f"There are currently {data['delayed_loads']} delayed loads.",
+
+            "mode": "kpi",
+
+            "kpi": data["delayed_loads"]
+        }
+
+    
+    
+        
     # -------------------------------------------------
     # RAG / POLICY PATH
     # -------------------------------------------------
+
     docs = rag.search(message)
 
     context = "\n\nContext:\n"
@@ -80,7 +165,7 @@ def chat(message: str) -> dict:
 
     for d in docs:
         context += f"[{d['source']}]\n{d['text']}\n\n"
-        sources.append(d["source"])
+        sources.append(d["source"])    
 
     # -------------------------------------------------
     # OFFLINE MODE (no API key)

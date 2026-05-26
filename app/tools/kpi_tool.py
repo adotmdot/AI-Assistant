@@ -1,26 +1,105 @@
-import sqlite3
-from datetime import datetime, timedelta
+from sqlalchemy import func
 
-DB_PATH = "app/data/fleetops.db"
+from app.database import SessionLocal
+from app.models.load import Load
 
-def on_time_percentage(days=7):
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+db = SessionLocal()
 
-    start = datetime.now() - timedelta(days=days)
 
-    cur.execute("""
-        SELECT 
-            COUNT(*) AS total,
-            SUM(CASE WHEN delivery_date <= planned_delivery_date THEN 1 ELSE 0 END) AS on_time
-        FROM shipments
-        WHERE pickup_date >= ?
-    """, (start.isoformat(),))
+def total_revenue():
 
-    total, on_time = cur.fetchone()
-    conn.close()
+    revenue = db.query(
+        func.sum(Load.revenue)
+    ).scalar()
 
-    if not total:
-        return None
+    return {
+        "total_revenue": round(revenue, 2)
+    }
 
-    return round((on_time / total) * 100, 2)
+
+def average_revenue():
+
+    avg = db.query(
+        func.avg(Load.revenue)
+    ).scalar()
+
+    return {
+        "average_revenue": round(avg, 2)
+    }
+
+
+def total_loaded_miles():
+
+    miles = db.query(
+        func.sum(Load.loaded_miles)
+    ).scalar()
+
+    return {
+        "total_loaded_miles": round(miles, 2)
+    }
+
+
+def total_empty_miles():
+
+    miles = db.query(
+        func.sum(Load.empty_miles)
+    ).scalar()
+
+    return {
+        "total_empty_miles": round(miles, 2)
+    }
+    
+    
+def top_customers():
+
+    rows = db.query(
+        Load.customer,
+        func.sum(Load.revenue)
+    ).group_by(
+        Load.customer
+    ).order_by(
+        func.sum(Load.revenue).desc()
+    ).limit(5).all()
+
+    return [
+        {
+            "customer": r[0],
+            "revenue": round(r[1], 2)
+        }
+        for r in rows
+    ]  
+    
+    
+def top_routes():
+
+    rows = db.query(
+        Load.origin,
+        Load.destination,
+        func.sum(Load.revenue)
+    ).group_by(
+        Load.origin,
+        Load.destination
+    ).order_by(
+        func.sum(Load.revenue).desc()
+    ).limit(5).all()
+
+    return [
+        {
+            "route": f"{r[0]} → {r[1]}",
+            "revenue": round(r[2], 2)
+        }
+        for r in rows
+    ] 
+    
+    
+def delayed_loads():
+
+    count = db.query(
+        func.count()
+    ).filter(
+        Load.status == "Delayed"
+    ).scalar()
+
+    return {
+        "delayed_loads": count
+    }         
