@@ -298,6 +298,47 @@ function App() {
 
       </div>
 
+
+      <div className="sample-prompts">
+
+        <button
+          onClick={() => {
+            setMessage("top customers")
+            setTimeout(() => sendMessage(), 100)
+          }}
+        >
+          Top customers
+        </button>
+
+        <button
+          onClick={() => {
+            setMessage("total revenue")
+            setTimeout(() => sendMessage(), 100)
+          }}
+        >
+          Total revenue
+        </button>
+
+        <button
+          onClick={() => {
+            setMessage("highest revenue customer")
+            setTimeout(() => sendMessage(), 100)
+          }}
+        >
+          Highest revenue customer
+        </button>
+
+        <button
+          onClick={() => {
+            setMessage("show revenue chart")
+            setTimeout(() => sendMessage(), 100)
+          }}
+        >
+          Show revenue chart
+        </button>
+
+      </div>
+
       {error && (
 
         <div className="response-card">

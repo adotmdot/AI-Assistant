@@ -68,6 +68,33 @@ body {
   transform: translateY(-1px);
 }
 
+.sample-prompts {
+  max-width: 1200px;
+  margin: 0 auto 35px auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+.sample-prompts button {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: white;
+  padding: 14px 22px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+
+.sample-prompts button:hover {
+  background: rgba(47,109,246,0.18);
+  border-color: #2f6df6;
+  transform: translateY(-2px);
+}
+
 .response-card {
   max-width: 1250px;
   margin: 0 auto;
