@@ -8,7 +8,8 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  CartesianGrid
+  CartesianGrid,
+  Cell
 } from "recharts"
 
 import "./App.css"
@@ -137,20 +138,89 @@ function App() {
 
               <ResponsiveContainer
                 width="100%"
-                height={400}
+                height={500}
               >
 
-                <BarChart data={chartData}>
+                <BarChart
+                  data={chartData}
+                  margin={{
+                    top: 20,
+                    right: 30,
+                    left: 40,
+                    bottom: 60
+                  }}
+                >
 
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#6b7280"
+                  />
 
-                  <XAxis dataKey="name" />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fill: "#ffffff", fontSize: 16 }}
+                    label={{
+                      value: "Customer",
+                      position: "insideBottom",
+                      offset: -20,
+                      fill: "#ffffff",
+                      fontSize: 20
+                    }}
+                  />
 
-                  <YAxis />
+                  <YAxis
+                    tick={{ fill: "#ffffff", fontSize: 14 }}
+                    tickFormatter={(value) =>
+                      `$${value.toLocaleString()}`
+                    }
+                    label={{
+                      value: "Revenue (USD)",
+                      angle: -90,
+                      position: "insideLeft",
+                      fill: "#ffffff",
+                      fontSize: 20
+                    }}
+                  />
 
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value) => [
+                      `$${value.toLocaleString()}`,
+                      "Revenue"
+                    ]}
+                    contentStyle={{
+                      backgroundColor: "#111827",
+                      border: "none",
+                      borderRadius: "10px",
+                      color: "#fff"
+                    }}
+                  />
 
-                  <Bar dataKey="value" />
+                  <Bar
+                    dataKey="value"
+                    radius={[8, 8, 0, 0]}
+                  >
+
+                    {chartData.map((entry, index) => {
+
+                      const colors = [
+                        "#3b82f6",
+                        "#22c55e",
+                        "#f97316",
+                        "#a855f7",
+                        "#06b6d4",
+                        "#eab308",
+                        "#ef4444"
+                      ]
+
+                      return (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={colors[index % colors.length]}
+                        />
+                      )
+                    })}
+
+                  </Bar>
 
                 </BarChart>
 
