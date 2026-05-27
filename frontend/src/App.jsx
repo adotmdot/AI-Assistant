@@ -99,23 +99,24 @@ function App() {
 
           <ResponsiveContainer
             width="100%"
-            height={550}
+            height={650}
           >
 
             <BarChart
               data={chartData}
               margin={{
-                top: 20,
-                right: 30,
-                left: 70,
-                bottom: 40,
+                top: 30,
+                right: 40,
+                left: 95,
+                bottom: 70,
               }}
+              barCategoryGap="18%"
             >
 
               <CartesianGrid
                 strokeDasharray="4 4"
                 stroke="#7c8db5"
-                opacity={0.4}
+                opacity={0.35}
               />
 
               <XAxis
@@ -123,13 +124,18 @@ function App() {
                 tick={{
                   fill: "#ffffff",
                   fontSize: 18,
+                  fontWeight: "600",
+                }}
+                tickLine={false}
+                axisLine={{
+                  stroke: "#5b6b93",
                 }}
                 label={{
                   value: "Customer",
                   position: "insideBottom",
-                  offset: -15,
+                  dy: 35,
                   fill: "#ffffff",
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: "bold",
                 }}
               />
@@ -140,35 +146,60 @@ function App() {
                 }
                 tick={{
                   fill: "#ffffff",
-                  fontSize: 16,
+                  fontSize: 17,
+                  fontWeight: "500",
+                }}
+                tickLine={false}
+                axisLine={{
+                  stroke: "#5b6b93",
                 }}
                 label={{
                   value: "Revenue (USD)",
                   angle: -90,
                   position: "insideLeft",
-                  dx: -40,
+                  dx: -70,
                   fill: "#ffffff",
-                  fontSize: 18,
+                  fontSize: 22,
                   fontWeight: "bold",
                 }}
               />
 
               <Tooltip
+                cursor={{
+                  fill: "rgba(255,255,255,0.08)",
+                }}
                 formatter={(value) => [
-                  `$${value.toLocaleString()}`,
+                  `$${Number(value).toLocaleString()}`,
                   "Revenue",
                 ]}
                 contentStyle={{
-                  backgroundColor: "#081738",
-                  border: "1px solid #2f6df6",
-                  borderRadius: "12px",
-                  color: "#fff",
+                  background:
+                    "linear-gradient(145deg,#081738,#0b1d4d)",
+                  border: "2px solid #2f6df6",
+                  borderRadius: "18px",
+                  color: "#ffffff",
+                  boxShadow:
+                    "0 0 25px rgba(47,109,246,0.45)",
+                  padding: "18px",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                }}
+                labelStyle={{
+                  color: "#ffffff",
+                  fontSize: "22px",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}
+                itemStyle={{
+                  color: "#60a5fa",
+                  fontSize: "18px",
+                  fontWeight: "bold",
                 }}
               />
 
               <Bar
                 dataKey="value"
-                radius={[10, 10, 0, 0]}
+                radius={[14, 14, 0, 0]}
               >
 
                 {chartData.map((entry, index) => (
